@@ -14,6 +14,7 @@ import MTProtoMessagePort from '../mtproto/mtprotoMessagePort';
 import appStateManager from './appStateManager';
 import {AppStoragesManager} from './appStoragesManager';
 import createManagers from './createManagers';
+import { InputFileLocation, InputGroupCall, UploadFile } from '../../layer';
 
 type Managers = Awaited<ReturnType<typeof createManagers>>;
 
@@ -119,6 +120,42 @@ export class AppManagersManager {
     } else {
       this.serviceMessagePort = new ServiceMessagePort();
       this.serviceMessagePort.addMultipleEventsListeners({
+        
+        getGroupCallStreamBlob: (request: {
+          call: InputGroupCall.inputGroupCall,
+          time_ms: number,
+          scale: number,
+          video_channel: number
+        }) => {
+
+          const { call, time_ms, scale, video_channel } = request;
+
+          const location: InputFileLocation.inputGroupCallStream = {
+            _: 'inputGroupCallStream',
+            call,
+            time_ms,
+            scale,
+            video_channel,
+            video_quality: 1,
+          };
+
+          return callbackify(appManagersManager.getManagers(), async(managers) => {
+            try {
+
+              const r = await managers.apiManager.invokeApi('upload.getFile', {
+                location,
+                offset: 0,
+                precise: false,
+                limit: (1024 * 1024)
+              }) as UploadFile.uploadFile;
+
+              return r.bytes;
+
+            } catch (e) {
+              return JSON.stringify(e);
+            }
+          });
+        },
         requestFilePart: (payload) => {
           return callbackify(appManagersManager.getManagers(), (managers) => {
             const {docId, dcId, offset, limit} = payload;

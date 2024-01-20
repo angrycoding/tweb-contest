@@ -4,6 +4,7 @@
  * https://github.com/morethanwords/tweb/blob/master/LICENSE
  */
 
+import {render} from 'solid-js/web';
 import type {Channel} from '../../lib/appManagers/appChatsManager';
 import type {AppSidebarRight} from '../sidebarRight';
 import type Chat from './chat';
@@ -28,7 +29,7 @@ import cancelEvent from '../../helpers/dom/cancelEvent';
 import {attachClickEvent} from '../../helpers/dom/clickEvent';
 import {toast, toastNew} from '../toast';
 import replaceContent from '../../helpers/dom/replaceContent';
-import {ChatFull, Chat as MTChat, GroupCall, Dialog} from '../../layer';
+import {ChatFull, Chat as MTChat, GroupCall, Dialog, Updates, Update} from '../../layer';
 import PopupPickUser from '../popups/pickUser';
 import PopupPeer, {PopupPeerCheckboxOptions} from '../popups/peer';
 import AppEditContactTab from '../sidebarRight/tabs/editContact';
@@ -59,6 +60,9 @@ import PopupBoostsViaGifts from '../popups/boostsViaGifts';
 import AppStatisticsTab from '../sidebarRight/tabs/statistics';
 import {ChatType} from './chat';
 import AppBoostsTab from '../sidebarRight/tabs/boosts';
+import GroupCallPinnedMessage from '../groupCallVideo/GroupCallPinnedMessage/GroupCallPinnedMessage';
+import { nextRandomUint } from '../../helpers/random';
+import groupCallVideo from '../groupCallVideo/groupCallVideo';
 
 type ButtonToVerify = {element?: HTMLElement, verify: () => boolean | Promise<boolean>};
 
@@ -95,9 +99,11 @@ export default class ChatTopbar {
   private buttonsToVerify: ButtonToVerify[];
   private chatInfoContainer: HTMLDivElement;
   private person: HTMLDivElement;
+  private groupCallPinnedMessage: HTMLDivElement;
 
   private titleMiddlewareHelper: MiddlewareHelper;
   private status: ReturnType<ChatTopbar['createStatus']>;
+  private removeGroupCallPinnedMessage: () => void | null = null;
 
   constructor(
     private chat: Chat,
@@ -154,6 +160,7 @@ export default class ChatTopbar {
 
     person.append(content);
     this.chatInfo.append(person);
+    this.groupCallPinnedMessage = document.createElement('div');
 
     // * chat utils section
     this.chatUtils = document.createElement('div');
@@ -318,6 +325,9 @@ export default class ChatTopbar {
   };
 
   private verifyVideoChatButton = async(type?: 'group' | 'broadcast') => {
+    // console.clear();
+    console.info({type});
+
     if(!IS_GROUP_CALL_SUPPORTED || this.peerId.isUser() || this.chat.type !== ChatType.Chat || this.chat.threadId) return false;
 
     const currentGroupCall = groupCallsController.groupCall;
@@ -333,7 +343,9 @@ export default class ChatTopbar {
       }
     }
 
+    // console.clear();
     const chat = apiManagerProxy.getChat(chatId);
+    // console.info('HERE', chat);
     return (chat as MTChat.chat).pFlags?.call_active || hasRights(chat, 'manage_call');
   };
 
@@ -405,6 +417,12 @@ export default class ChatTopbar {
       text: 'PeerInfo.Action.VoiceChat',
       onClick: this.onJoinGroupCallClick,
       verify: this.verifyVideoChatButton.bind(this, 'group')
+    }, {
+      icon: 'livelocation',
+      text: 'PeerInfo.Action.LiveStream',
+      onClick: this.onGetRtmpUrl,
+      verify: () => true
+    //   verify: this.verifyVideoChatButton.bind(this, 'group')
     }, {
       icon: 'topics',
       text: 'TopicViewAsTopics',
@@ -628,6 +646,35 @@ export default class ChatTopbar {
   private onJoinGroupCallClick = () => {
     this.chat.appImManager.joinGroupCall(this.peerId);
   };
+
+
+  private onGetRtmpUrl = async() => {
+
+    const chatId = this.peerId.toChatId();
+
+    // get rtmp urls
+    const rtmpUrls = await this.managers.apiManager.invokeApi('phone.getGroupCallStreamRtmpUrl', {
+      peer: await this.managers.appPeersManager.getInputPeerById(chatId.toPeerId(true)),
+      revoke: false
+    });
+
+    if (!window.confirm(`${[rtmpUrls.url, rtmpUrls.key].join('=')}`)) return;
+
+    // create group call
+    const updates = await this.managers.apiManager.invokeApi('phone.createGroupCall', {
+      peer: await this.managers.appPeersManager.getInputPeerById(chatId.toPeerId(true)),
+      random_id: nextRandomUint(32),
+      rtmp_stream: true,
+    });
+
+    this.managers.apiUpdatesManager.processUpdateMessage(updates);
+    const update = (updates as Updates.updates).updates.find((update) => update._ === 'updateGroupCall') as Update.updateGroupCall;
+    console.info('create result', update.call.id);
+
+    // this.joinRunningBroadcast();
+    groupCallVideo.show(chatId, this.managers);
+    
+   }
 
   private get peerId() {
     return this.chat.peerId;
@@ -895,6 +942,22 @@ export default class ChatTopbar {
       setActionsCallback
     ] = await Promise.all(promises);
 
+    if (this.removeGroupCallPinnedMessage) {
+      this.removeGroupCallPinnedMessage();
+    }
+
+    if ((chat as MTChat.chat)?.pFlags?.call_active) {
+      const bubbles = document.querySelector('.bubbles');
+      bubbles.parentNode.insertBefore(this.groupCallPinnedMessage, bubbles);
+      this.removeGroupCallPinnedMessage = render(() => GroupCallPinnedMessage({
+        chatId: peerId.toChatId(),
+        managers: this.managers,
+        onClose: this.removeGroupCallPinnedMessage
+      }), this.groupCallPinnedMessage);
+    } else if (this.removeGroupCallPinnedMessage) {
+      this.removeGroupCallPinnedMessage = null;
+    }
+    
     if(!middleware() && newAvatarMiddlewareHelper) {
       newAvatarMiddlewareHelper.destroy();
     }

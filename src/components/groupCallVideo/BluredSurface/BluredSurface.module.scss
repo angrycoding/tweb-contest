@@ -1,0 +1,64 @@
+@keyframes move {
+  0% {
+    mask-position: -100vw;
+    background-position: -100vw 0px;
+  }
+  100% {
+    mask-position: 100vw;
+    background-position: 100vw 0px;
+  }
+}
+
+.wrapper {
+  pointer-events: none;
+  position: absolute;
+  background-color: #3C3C3C;
+  border-radius: inherit;
+  * {
+    position: absolute;
+    inset: 0px;
+  }
+}
+
+.bg {
+  * {
+    min-width: 100%;
+    min-height: 100%;
+    border-radius: 0px;
+  }
+  & > * {
+    transform-origin: 50% 50%;
+    transform: scale(1.1);
+  }
+  filter: blur(50px);
+}
+
+.blur {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.border {
+  border: 2px solid rgba(white, 0.75);
+  border-radius: inherit;
+  mask-image: linear-gradient(90deg, rgba(255, 255, 255, 0) 17.63%, #FFFFFF 41.18%, rgba(255, 255, 255, 0) 63.83%);
+  mask-repeat: no-repeat;
+  animation-name: move;
+  animation-duration: 1.5s;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+  animation-iteration-count: infinite;
+}
+
+.stripe {
+  animation-name: move;
+  animation-duration: 1.5s;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+  animation-iteration-count: infinite;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0) 17.63%, #FFFFFF 41.18%, rgba(255, 255, 255, 0) 63.83%);
+  background-blend-mode: overlay;
+  background-repeat: no-repeat;
+  opacity: 0.75;
+  filter: blur(50px);
+}
+

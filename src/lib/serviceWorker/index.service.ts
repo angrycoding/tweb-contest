@@ -16,6 +16,7 @@ import {getWindowClients} from '../../helpers/context';
 import {MessageSendPort} from '../mtproto/superMessagePort';
 import handleDownload from './download';
 import onShareFetch, {checkWindowClientForDeferredShare} from './share';
+import onGroupCallStreamFetch from './groupCallStream';
 
 // #if MTPROTO_SW
 // import '../mtproto/mtproto.worker';
@@ -137,6 +138,11 @@ const onFetch = (event: FetchEvent): void => {
     // log.debug('[fetch]:', event);
 
     switch(scope) {
+      case 'groupCallStream': {
+        onGroupCallStreamFetch(event);
+        break;
+      }
+
       case 'stream': {
         onStreamFetch(event, params);
         break;

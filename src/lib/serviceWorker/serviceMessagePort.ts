@@ -9,6 +9,7 @@ import type {PushNotificationObject} from './push';
 import type {MyUploadFile} from '../mtproto/apiFileManager';
 import SuperMessagePort from '../mtproto/superMessagePort';
 import {MOUNT_CLASS_TO} from '../../config/debug';
+import {GroupCallStreamChannel, InputGroupCall} from '../../layer';
 
 export type ServicePushPingTaskPayload = {
   localNotifications: boolean,
@@ -56,7 +57,15 @@ export default class ServiceMessagePort<Master extends boolean = false> extends 
   share: (payload: ShareData) => void,
 
   // to mtproto worker
-  requestFilePart: (payload: ServiceRequestFilePartTaskPayload) => Promise<MyUploadFile> | MyUploadFile
+  requestFilePart: (payload: ServiceRequestFilePartTaskPayload) => Promise<MyUploadFile> | MyUploadFile,
+
+  getGroupCallStreamBlob: (request: {
+    call: InputGroupCall.inputGroupCall
+    time_ms: number,
+    scale: number,
+    video_channel: number
+  }) => Promise<Uint8Array | string>,
+
 } & ServiceEvent, Master> {
   constructor() {
     super('SERVICE');

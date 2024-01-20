@@ -1,0 +1,351 @@
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@mixin square($size) {
+  width: $size;
+  height: $size;
+  min-width: $size;
+  min-height: $size;
+  max-width: $size;
+  max-height: $size;
+}
+
+@mixin button {
+  @include square(24px);
+  background-color: white;
+  mask-position: center;
+  mask-repeat: no-repeat;
+  mask-size: contain;
+  cursor: pointer;
+}
+
+.outerWrapper {
+  position: fixed;
+  inset: 0px;
+  color: white;
+  background: #000000E5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-content: center;
+  z-index: 100;
+  padding-top: 100px;
+  padding-bottom: 100px;
+  padding-left: 100px;
+  padding-right: 100px;
+}
+
+.header {
+  position: absolute;
+  left: 0px;
+  right: 0px;;
+  top: 0px;
+  display: flex;
+  gap: 20px;
+  padding-left: 12px;
+  padding-top: 7px;
+  padding-bottom: 7px;
+  padding-right: 12px;
+  align-items: center;
+  .avatar {
+    @include square(42px);
+  }
+  .titles {
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    & > * {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    & > *:empty {
+      display: none;
+      }
+    & > *:nth-child(1) {
+      font-weight: 500;
+      font-size: 16px;
+      line-height: 21px;
+    }
+    & > *:nth-child(2) {
+      line-height: 20px;
+      font-size: 14px;
+      font-weight: 400;
+      color: #FFFFFF80;
+    }
+  }
+}
+
+.videoWrapper {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+  background: #3C3C3C;
+  border-radius: 10px;
+  overflow: hidden;
+
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+
+  iframe {
+    position: absolute;
+    inset: 0px;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    border: 0px none;
+    visibility: hidden;
+  }
+}
+
+.blur {
+  position: absolute;
+  inset: 0px;
+  border-radius: inherit;
+}
+
+.controls {
+  position: absolute;
+  left: 16px;;
+  right: 16px;
+  bottom: 16px;
+  z-index: 1;;
+  gap: 16px;
+  display: flex;
+  align-items: center;
+  .spacer {
+    flex: 1;
+  }
+}
+
+.status {
+  background-color: #636363;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 4px 7px 4px 7px;
+  line-height: 16.41px;
+}
+
+.live .status {
+  background: linear-gradient(75.19deg, #4588E3 -79.42%, #976FFF 20.35%, #E46ACE 100.03%), linear-gradient(0deg, #EA3323, #EA3323);
+}
+
+.watching {
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.cross {
+  @include button;
+  mask-image: url('./cross.svg');
+}
+
+.share {
+  @include button;
+  mask-image: url('./share.svg');
+}
+
+.speaker {
+  @include button;
+  mask-image: url('./notmuted.svg');
+  &.muted {
+    mask-image: url('./muted.svg');
+  }
+}
+
+.menuButton {
+  position: relative;
+  .menu {
+    display: none;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    transform: translateY(calc(-100% - 20px));
+    z-index: 10;
+    box-shadow: 0px 0px 10px 0px #00000026;
+    background: #00000080;
+    white-space: nowrap;
+    border-radius: 10px;
+    font-weight: 500;
+    font-size: 14px;
+    & > * {
+      padding-top: 8px;
+      padding-bottom: 8px;
+      padding-left: 14px;
+      padding-right: 14px;
+      display: flex;
+      gap: 20px;
+      span {
+        display: block;
+        min-width: 20px;
+        min-height: 20px;
+        background-color: blue;
+      }
+    }
+  }
+  &:focus .menu {
+    display: block;
+  }
+  .icon {
+    @include button;
+    mask-image: url('./menu.svg');
+  }
+}
+
+.pip {
+  @include button;
+  mask-image: url('./pip.svg');
+}
+
+.fullscreen {
+  @include button;
+  mask-image: url('./fullscreen.svg');
+}
+
+.noStreamAdmin {
+  max-width: 40%;
+  & > *:nth-child(1) {
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 10px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    &::before {
+      content: '';
+      background-image: url('./loading.svg');
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      @include square(16px);
+      animation-name: rotate;
+      animation-timing-function: linear;
+      animation-duration: 1s;
+      animation-iteration-count: infinite;
+    }
+  }
+  & > *:nth-child(2) {
+    font-size: 16px;
+    font-weight: 400;
+    margin-bottom: 12px;
+  }
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.pseudoField {
+  border: 1px solid red;
+  border-radius: 10px;
+  gap: 32px;
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  cursor: pointer;
+  * {
+    pointer-events: none;
+  }
+  &:hover {
+    background-color: #FFFFFF1A;
+  }
+  &::before {
+    content: '';
+    @include square(24px);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-image: var(--icon1);
+  }
+  &::after {
+    content: '';
+    @include square(24px);
+    background-image: url('./copypaste.svg');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+  }
+  & > * {
+    width: 100%;
+    overflow: hidden;
+  }
+  & > * > * {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  & > * > *:nth-child(1) {
+    font-weight: 400;
+    font-size: 16px;
+    &::selection{ color:inherit }
+    line-height: 22px;
+    border: 0px none;
+    padding: 0px;
+    margin: 0px;
+    display: block;
+    color: inherit;
+    width: 100%;
+  }
+  & > * > *:nth-child(2) {
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px;
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    &::after {
+      content: '';
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-image: var(--icon2);
+      @include square(16px);
+    }
+  }
+}
+
+
+
+.outerWrapper.live {
+   
+   &.audioOnly {
+      iframe {
+         visibility: hidden;
+      }
+      .pip, .fullscreen {
+         pointer-events: none;
+         opacity: 0.65;
+      }
+   }
+
+   &:not(.audioOnly) {
+      iframe {
+         visibility: visible;
+      }
+   }
+}
+
+.outerWrapper:not(.live) {
+  .pip, .fullscreen, .speaker {
+    pointer-events: none;
+    opacity: 0.65;
+  }
+  iframe {
+    visibility: hidden;
+  }
+  .menuButton {
+    display: none;
+  }
+}
+
+
