@@ -418,8 +418,8 @@ export default class ChatTopbar {
       onClick: this.onJoinGroupCallClick,
       verify: this.verifyVideoChatButton.bind(this, 'group')
     }, {
-      icon: 'livelocation',
-      text: 'PeerInfo.Action.LiveStream',
+      icon: 'cameraadd',
+      text: 'PeerInfo.Action.StartRTMPStream',
       onClick: this.onGetRtmpUrl,
       verify: () => true
     //   verify: this.verifyVideoChatButton.bind(this, 'group')

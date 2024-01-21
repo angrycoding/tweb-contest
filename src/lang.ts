@@ -2181,6 +2181,7 @@ const lang = {
   // "PeerInfo.Confirm.RemovePeer": "Remove %@ from the group?",
   'PeerInfo.Action.VoiceChat': 'Video Chat',
   'PeerInfo.Action.LiveStream': 'Live Stream',
+  'PeerInfo.Action.StartRTMPStream': 'Start RTMP Stream',
   'PeerInfo.Phone.AnonymousInfo': 'This number is not tied to a SIM card and was acquired on [Fragment]().',
   'PeerInfo.SetAboutDescription': 'You can provide an optional description for your group.',
   'PeerMedia.Members': 'Members',
