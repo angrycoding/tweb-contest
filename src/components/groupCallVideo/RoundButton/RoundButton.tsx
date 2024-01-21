@@ -11,9 +11,9 @@ const callIt = (v: any) => {
 }
 
 const RoundButton = (props: {
-   icon: string,
+   icon: any,
    size: number,
-   title?: string;
+   title?: any;
    disabled?: any
    className?: string,
    onClick?: (event: MouseEvent) => void
@@ -22,9 +22,9 @@ const RoundButton = (props: {
    const { icon, size, className, disabled, title, onClick } = props;
 
    return <div class={clsx(styles.wrapper, callIt(disabled) && styles.disabled, className)} style={{
-      '--icon': `url(${icon})`,
+      '--icon': `url(${callIt(icon)})`,
       '--size': `${size}px`
-   }} onClick={onClick} title={title} />;
+   }} onClick={onClick} title={callIt(title)} />;
  }
  
 export default RoundButton; 

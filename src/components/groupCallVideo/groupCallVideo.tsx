@@ -254,6 +254,7 @@ const MyThing = (props: {
 
 
  
+  const isMuted = () => getIsMuted();
   const getHasNoStream = () => !getIsPlaying();
   const getHasNoVideo = () => !getIsPlaying() || getAudioOnly();
 
@@ -287,8 +288,8 @@ const MyThing = (props: {
                size={36}
                onClick={toggleSound}
                disabled={getHasNoStream}
-               title={getIsMuted() ? 'Unmute' : 'Mute'}
-               icon={getIsMuted() ? mutedIcon : notMutedIcon}
+               title={() => isMuted() ? 'Unmute' : 'Mute'}
+               icon={() => isMuted() ? mutedIcon : notMutedIcon}
             />
 
             <div class={styles.watching}>{formatWatching(getGroupCallWatching())}</div>
