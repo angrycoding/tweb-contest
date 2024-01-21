@@ -1,3 +1,4 @@
+/* eslint-disable */
 import styles from './BluredSurface.module.scss';
 import clsx from '../clsx';
 

@@ -61,7 +61,7 @@ import AppStatisticsTab from '../sidebarRight/tabs/statistics';
 import {ChatType} from './chat';
 import AppBoostsTab from '../sidebarRight/tabs/boosts';
 import GroupCallPinnedMessage from '../groupCallVideo/GroupCallPinnedMessage/GroupCallPinnedMessage';
-import { nextRandomUint } from '../../helpers/random';
+import {nextRandomUint} from '../../helpers/random';
 import groupCallVideo from '../groupCallVideo/groupCallVideo';
 
 type ButtonToVerify = {element?: HTMLElement, verify: () => boolean | Promise<boolean>};
@@ -646,25 +646,21 @@ export default class ChatTopbar {
   private onJoinGroupCallClick = () => {
     this.chat.appImManager.joinGroupCall(this.peerId);
   };
-
-
   private onGetRtmpUrl = async() => {
-
     const chatId = this.peerId.toChatId();
-
     // get rtmp urls
     const rtmpUrls = await this.managers.apiManager.invokeApi('phone.getGroupCallStreamRtmpUrl', {
       peer: await this.managers.appPeersManager.getInputPeerById(chatId.toPeerId(true)),
       revoke: false
     });
 
-    if (!window.confirm(`${[rtmpUrls.url, rtmpUrls.key].join('=')}`)) return;
+    if(!window.confirm(`${[rtmpUrls.url, rtmpUrls.key].join('=')}`)) return;
 
     // create group call
     const updates = await this.managers.apiManager.invokeApi('phone.createGroupCall', {
       peer: await this.managers.appPeersManager.getInputPeerById(chatId.toPeerId(true)),
       random_id: nextRandomUint(32),
-      rtmp_stream: true,
+      rtmp_stream: true
     });
 
     this.managers.apiUpdatesManager.processUpdateMessage(updates);
@@ -673,9 +669,7 @@ export default class ChatTopbar {
 
     // this.joinRunningBroadcast();
     groupCallVideo.show(chatId, this.managers);
-    
-   }
-
+  }
   private get peerId() {
     return this.chat.peerId;
   }
@@ -942,11 +936,11 @@ export default class ChatTopbar {
       setActionsCallback
     ] = await Promise.all(promises);
 
-    if (this.removeGroupCallPinnedMessage) {
+    if(this.removeGroupCallPinnedMessage) {
       this.removeGroupCallPinnedMessage();
     }
 
-    if ((chat as MTChat.chat)?.pFlags?.call_active) {
+    if((chat as MTChat.chat)?.pFlags?.call_active) {
       const bubbles = document.querySelector('.bubbles');
       bubbles.parentNode.insertBefore(this.groupCallPinnedMessage, bubbles);
       this.removeGroupCallPinnedMessage = render(() => GroupCallPinnedMessage({
@@ -954,14 +948,12 @@ export default class ChatTopbar {
         managers: this.managers,
         onClose: this.removeGroupCallPinnedMessage
       }), this.groupCallPinnedMessage);
-    } else if (this.removeGroupCallPinnedMessage) {
+    } else if(this.removeGroupCallPinnedMessage) {
       this.removeGroupCallPinnedMessage = null;
     }
-    
     if(!middleware() && newAvatarMiddlewareHelper) {
       newAvatarMiddlewareHelper.destroy();
     }
-
     return () => {
       const canHaveSomeButtons = !(this.chat.type === ChatType.Pinned || this.chat.type === ChatType.Scheduled);
       this.btnMute && this.btnMute.classList.toggle('hide', !isBroadcast || !canHaveSomeButtons);

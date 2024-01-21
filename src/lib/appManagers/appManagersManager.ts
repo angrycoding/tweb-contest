@@ -14,7 +14,7 @@ import MTProtoMessagePort from '../mtproto/mtprotoMessagePort';
 import appStateManager from './appStateManager';
 import {AppStoragesManager} from './appStoragesManager';
 import createManagers from './createManagers';
-import { InputFileLocation, InputGroupCall, UploadFile } from '../../layer';
+import {InputFileLocation, InputGroupCall, UploadFile} from '../../layer';
 
 type Managers = Awaited<ReturnType<typeof createManagers>>;
 
@@ -120,15 +120,8 @@ export class AppManagersManager {
     } else {
       this.serviceMessagePort = new ServiceMessagePort();
       this.serviceMessagePort.addMultipleEventsListeners({
-        
-        getGroupCallStreamBlob: (request: {
-          call: InputGroupCall.inputGroupCall,
-          time_ms: number,
-          scale: number,
-          video_channel: number
-        }) => {
-
-          const { call, time_ms, scale, video_channel } = request;
+        getGroupCallStreamBlob: (request: {call: InputGroupCall.inputGroupCall, time_ms: number, scale: number, video_channel: number}) => {
+          const {call, time_ms, scale, video_channel} = request;
 
           const location: InputFileLocation.inputGroupCallStream = {
             _: 'inputGroupCallStream',
@@ -136,22 +129,19 @@ export class AppManagersManager {
             time_ms,
             scale,
             video_channel,
-            video_quality: 1,
+            video_quality: 1
           };
 
           return callbackify(appManagersManager.getManagers(), async(managers) => {
             try {
-
               const r = await managers.apiManager.invokeApi('upload.getFile', {
                 location,
                 offset: 0,
                 precise: false,
                 limit: (1024 * 1024)
               }) as UploadFile.uploadFile;
-
               return r.bytes;
-
-            } catch (e) {
+            } catch(e) {
               return JSON.stringify(e);
             }
           });

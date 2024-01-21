@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { createSignal, onCleanup, onMount } from 'solid-js';
 import styles from './GroupCallPinnedMessage.module.scss';
 import rootScope from '../../../lib/rootScope';
@@ -5,34 +6,6 @@ import { ChatFull, GroupCall } from '../../../layer';
 import groupCallVideo from '../groupCallVideo';
 import { AppManagers } from '../../../lib/appManagers/managers';
 import formatWatching from '../formatWatching';
-
-/*
-
-  private OPEN_BROADCAST = async(
-    chatId: string | number,
-    chatTile: string
-  ) => {
-
-    
-
-
-    groupCallVideo.show(
-      chatId,
-      this.managers
-    );
-
-
-  }
-
-  // private joinRunningBroadcast = superLayer.onclick = async() => {
-  //   const chatId = this.peerId.toChatId();
-  //   const chat = await apiManagerProxy.getChat(chatId);
-  //   this.OPEN_BROADCAST(chatId, chat.title);
-  // }
-*/
-
-
-
 
 const GroupCallPinnedMessage = (props: {
   chatId: ChatId,

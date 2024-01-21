@@ -1,0 +1,38 @@
+.wrapper {
+   width: var(--size);
+   height: var(--size);
+   min-width: var(--size);
+   min-height: var(--size);
+   max-width: var(--size);
+   max-height: var(--size);
+   position: relative;
+   pointer-events: all;
+
+   border-radius: 100%;
+   overflow: hidden;
+   cursor: pointer;
+
+   &:hover::before {
+      content: '';
+      position: absolute;
+      inset: 0px;;
+      background-color: rgba(white, 0.2);
+   }
+
+   &::after {
+      content: '';
+      inset: 0px;
+      position: absolute;
+      background-color: white;
+      mask-image: var(--icon);
+      mask-position: center;
+      mask-repeat: no-repeat;
+      mask-size: 60%;
+   }
+
+   &.disabled {
+      pointer-events: none;
+      opacity: 0.65;
+   }
+
+}
